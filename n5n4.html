@@ -63,11 +63,20 @@ $(document).ready(function() {
             { title: "编号" },
             { title: "假名",
                 render: function(data, type, row, meta) {
-                    if (!accent_dict.hasOwnProperty(data)) {
+                    let n = row[5].toString();
+                    if (!(data in accent_dict)) {
                         //console.log('error: no accent found of '+data);
-                        return data;
+                    } else if (n in accent_dict[data]) {
+                        return accent_dict[data][n];
+                    } else if (Object.keys(accent_dict[data]).length > 0) {
+                        let closest = Object.keys(accent_dict[data]).reduce(function(prev, curr) {
+                            return (Math.abs(curr - n) < Math.abs(prev - n) ? curr : prev);
+                        });
+                        return '<!-- '+n+' -> '+closest+' -->'+accent_dict[data][closest];
+                    } else {
+                        console.log('error: corrupted accent dict');
                     }
-                    return accent_dict[data];
+                    return data;
                 }
             },
             { title: "类型" },

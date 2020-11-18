@@ -5,6 +5,13 @@ import regex as re
 import json
 
 
+re_row = re.compile(r'<tr id="word_\d+">(.*?)</tr>', flags=re.S | re.I)
+re_cell = re.compile(r'<td class="katsuyo[^>]+>(.*?)</td>', flags=re.S | re.I)
+re_a_tag = re.compile(r"<a[^>]+>.*?</a>", flags=re.S | re.I)
+re_head_space = re.compile(r"^\s+<", flags=re.S | re.I | re.M)
+re_tag = re.compile(r"<[^>]+?>", flags=re.S | re.I)
+
+
 def down(n):
     n = str(n)
     fn = "accent/L" + n + ".html"
@@ -30,19 +37,13 @@ def down_all():
 
 
 def get_word(el):
-    re_tag = re.compile(r"<[^>]+?>", flags=re.S | re.I)
     word = re_tag.sub("", el)
     return word.strip()
 
 
-def parse(data, n):
-    n = str(n)
-    fn = "accent/L" + n + ".html"
-    with open(fn, "r", encoding="utf-8") as f:
-        html = f.read()
-    re_row = re.compile(r'<tr id="word_\d+">(.*?)</tr>', flags=re.S | re.I)
+def parse(data, html, n):
     rows = re_row.findall(html)
-    print("len(rows): %s" % len(rows))
+    print("[%s] len(rows): %s" % (n, len(rows)))
     i = 0
     for row in rows:
         i += 1
@@ -50,28 +51,30 @@ def parse(data, n):
             # continue
             pass
         # print(row)
-        re_cell = re.compile(r'<td class="katsuyo[^>]+>(.*?)</td>', flags=re.S | re.I)
         cells = re_cell.findall(row)
         for cell in cells:
             cell = cell.strip()
             if not cell:
                 continue
-            re_a_tag = re.compile(r"<a[^>]+>.*?</a>", flags=re.S | re.I)
             cell = re_a_tag.sub("", cell)
-            re_head_space = re.compile(r"^\s+<", flags=re.S | re.I | re.M)
             cell = re_head_space.sub("<", cell)
             # print("[" + cell + "]")
             word = get_word(cell)
             # print("[" + word + "]")
-            data[word] = cell
+            if not word in data:
+                data[word] = {}
+            data[word][n] = cell
 
 
 def parse_all():
     data = {}
     for n in range(48):
-        parse(data, n + 1)
+        fn = "accent/L" + str(n + 1) + ".html"
+        with open(fn, "r", encoding="utf-8") as f:
+            html = f.read()
+            parse(data, html, n + 1)
     with open("data.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
 
 parse_all()
