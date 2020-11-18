@@ -1,0 +1,19 @@
+.accent_top {
+    position: relative;
+    white-space: nowrap;
+}
+.accent_plain, .accent_top {
+    border-top: #f63 1px solid;
+    padding: 1px 0px 0px 0px;
+}
+.accent_top:after {
+    content: "";
+    height: 20%;
+    width: 1px;
+    padding: 0;
+    margin: 0;
+    background-color: #f63;
+    position: absolute;
+    top: -0.5px;
+    right: -0.5px;
+}

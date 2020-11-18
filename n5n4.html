@@ -4,6 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>新标准日本语初级单词一览表</title>
 <link rel="stylesheet" type="text/css" href="dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="accent.css">
 <script src="jquery-3.5.1.min.js"></script>
 <script src="datatables.min.js"></script>
 <script src="config.js"></script>
@@ -52,6 +53,7 @@
 <table id="my_tbl" class="display" style="width:100%">
 </table>
 <script>
+var accent_dict = JSON.parse($.getJSON({'url': "n5n4.json", 'async': false}).responseText);
 $(document).ready(function() {
     $('#my_tbl').DataTable( {
         "pageLength": 50,
@@ -59,7 +61,15 @@ $(document).ready(function() {
         data: my_data,
         columns: [
             { title: "编号" },
-            { title: "假名" },
+            { title: "假名",
+                render: function(data, type, row, meta) {
+                    if (!accent_dict.hasOwnProperty(data)) {
+                        //console.log('error: no accent found of '+data);
+                        return data;
+                    }
+                    return accent_dict[data];
+                }
+            },
             { title: "类型" },
             { title: "解释" },
             { title: "日文" },
