@@ -3,7 +3,8 @@ import sys
 import requests
 import regex as re
 import json
-
+import ast
+from pprint import pprint
 
 re_row = re.compile(r'<tr id="word_\d+">(.*?)</tr>', flags=re.S | re.I)
 re_cell = re.compile(r'<td class="katsuyo[^>]+>(.*?)</td>', flags=re.S | re.I)
@@ -12,7 +13,8 @@ re_head_space = re.compile(r"^\s+<", flags=re.S | re.I | re.M)
 re_tag = re.compile(r"<[^>]+?>", flags=re.S | re.I)
 
 
-def down(n):
+def down(textbook, n):
+    textbook = str(textbook)
     n = str(n)
     fn = "accent/L" + n + ".html"
     if os.path.isfile(fn):
@@ -20,7 +22,9 @@ def down(n):
         return
 
     url = (
-        "http://www.gavo.t.u-tokyo.ac.jp/ojad/search/index/display:print/textbook:6/section:"
+        "http://www.gavo.t.u-tokyo.ac.jp/ojad/search/index/display:print/textbook:"
+        + textbook
+        + "/section:"
         + n
         + "-"
         + n
@@ -31,9 +35,9 @@ def down(n):
         f.write(r.content)
 
 
-def down_all():
-    for i in range(48):
-        down(str(i + 1))
+def down_all(textbook=7, cnt=32):
+    for i in range(cnt):
+        down(textbook, str(i + 1))
 
 
 def get_word(el):
@@ -66,9 +70,9 @@ def parse(data, html, n):
             data[word][n] = cell
 
 
-def parse_all():
+def parse_all(cnt=32):
     data = {}
-    for n in range(48):
+    for n in range(cnt):
         fn = "accent/L" + str(n + 1) + ".html"
         with open(fn, "r", encoding="utf-8") as f:
             html = f.read()
@@ -77,4 +81,41 @@ def parse_all():
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
 
-parse_all()
+def check():
+    data = {}
+    words = []
+    with open("n5n4.js", "r", encoding="utf-8") as f:
+        while True:
+            line = f.readline()
+            if not line:
+                break
+            try:
+                tmp = ast.literal_eval(line)
+                words.append(tmp[0])
+            except Exception:
+                pass
+    with open("n5n4.json", "r", encoding="utf-8") as f:
+        n5n4 = json.load(f)
+    with open("n3n2.json", "r", encoding="utf-8") as f:
+        n3n2 = json.load(f)
+    cnt_all = 0
+    cnt_ok = 0
+    cnt_ok32 = 0
+    for word in words:
+        if word[1] in n5n4:
+            cnt_ok += 1
+        elif word[1] in n3n2:
+            data[word[1]] = n3n2[word[1]]
+            print(word)
+            pprint(n3n2[word[1]])
+            cnt_ok32 += 1
+    print(cnt_all)
+    print(cnt_ok)
+    print(cnt_ok32)
+    with open("n5n4_more.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+
+
+# down_all()
+# parse_all()
+check()
