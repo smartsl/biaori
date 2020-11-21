@@ -2,10 +2,12 @@
     position: relative;
     white-space: nowrap;
 }
+
 .accent_plain, .accent_top {
     border-top: #f63 1px solid;
     padding: 1px 0px 0px 0px;
 }
+
 .accent_top:after {
     content: "";
     height: 20%;
@@ -24,4 +26,9 @@
 
 .accent_uncertain .accent_top:after {
     background-color: #36f !important;
+}
+
+.accent_uncertain .accent {
+    color: #36f;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Hiragino Sans GB", "Hiragino Sans GB W3", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
 }

@@ -76,7 +76,14 @@
                 let closest = Object.keys(dict[data]).reduce(function (prev, curr) {
                     return (Math.abs(curr - n) < Math.abs(prev - n) ? curr : prev);
                 });
-                return '<div class="accent_uncertain" title="' + n + ' -> ' + (match ? closest : 1000 + parseInt(closest)) + '">' + dict[data][closest] + '</div>';
+                let rl = '<div class="accent_uncertain" title="' + n + ' -> ' + closest + '">';
+                let rc = dict[data][closest];
+                let rr = '</div>';
+                if (!match && dict[data]['diff']) {
+                    rc = rc.replace(/<p>/, '<p>' + data + ' (');
+                    rc = rc.replace(/<\/p>/, ')' + '</p>');
+                }
+                return rl + rc + rr;
             } else {
                 console.log('error: corrupted accent dict');
             }
