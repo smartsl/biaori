@@ -33,6 +33,10 @@
             height: 80%;
         }
 
+        #my_tbl>tbody>tr>td:first-child {
+            vertical-align: top;
+        }
+
         #my_tbl>tbody>tr>td:nth-child(1) {
             width: 15%;
         }
@@ -64,10 +68,11 @@
         var gram_dict = JSON.parse($.getJSON({ 'url': gram_json_path, 'async': false }).responseText);
         $(document).ready(function () {
             $('#my_tbl').DataTable({
-                "dom": 'ifrtilp',
-                "lengthMenu": [1, 4, 8, 16, 32],
+                dom: 'ifrtilp',
+                lengthMenu: [1, 4, 8, 16, 32],
                 stateSave: true,
                 stateDuration: 60 * 60 * 24 * 30,
+                stripeClasses: [],
                 data: gram_dict,
                 columns: [
                     {

@@ -1,0 +1,208 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>新标准日本语单词一览表</title>
+    <link rel="stylesheet" type="text/css" href="dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="gram.css">
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="datatables.min.js"></script>
+    <script src="config.js"></script>
+    <style>
+        #my_tbl_wrapper {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #my_tbl_info,
+        .dataTables_info {
+            flex-grow: 1;
+            width: 20%;
+            padding: 0;
+        }
+
+        #my_tbl_filter {
+            flex-grow: 1;
+            width: 80%;
+            height: 50px;
+        }
+
+        #my_tbl_filter input {
+            width: calc(100% - 80px);
+            height: 80%;
+        }
+
+        #my_tbl>tbody>tr:hover {
+            background-color: #f1f3fa;
+        }
+
+        #my_tbl>tbody>tr:hover>.sorting_1 {
+            background-color: #f1f3fa;
+        }
+
+        #my_tbl>tbody>tr>td {
+            height: 4rem;
+        }
+
+        #my_tbl>tbody>tr>td:nth-child(1) {
+            width: 15%;
+        }
+
+        #my_tbl>tbody>tr>td:nth-child(5) {
+            width: 15%;
+        }
+
+        #my_tbl_length {
+            flex-grow: 1;
+            padding-top: 0.25em;
+        }
+
+        @media screen and (max-width: 767px) {
+            #my_tbl_length {
+                margin-top: 0.5em;
+                padding-left: 5em;
+            }
+        }
+
+        #my_tbl_length>label>select {
+            width: auto;
+            height: 38px;
+        }
+
+        #my_tbl button {
+            width: 10rem;
+            height: 100%;
+            font-size: 1.25rem;
+
+            color: #333;
+            text-align: center;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+            background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+            background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+            background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+            background-repeat: repeat-x;
+            border: 1px solid #cccccc;
+            border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+            border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+            border-bottom-color: #b3b3b3;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe6e6e6', GradientType=0);
+            filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+            -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+            -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        #my_tbl button:active {
+            background-color: #cccccc \9;
+            background-image: none;
+            outline: 0;
+            -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+            -moz-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        #my_tbl button:disabled {
+            color: #ccc;
+        }
+
+        #my_tbl button:enabled:hover {
+            color: #f63;
+            background-color: #e6e6e6;
+            background-position: 0 -15px;
+            transition: background-position 0.1s linear;
+        }
+
+        #my_tbl button:focus {
+            outline-width: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <p>新标准日本语单词一览表</p>
+    <table id="my_tbl" class="display" style="width:100%">
+    </table>
+    <script>
+        var audio_objs = {};
+        var audio_fix_tbl = { '624,36.705,37.777': [36.705, 38.7], '624,37.777,40.531': [38.7, 40.531], };
+        function fix_audio_time(num, start, end) {
+            let i = num + ',' + start + ',' + end;
+            if (i in audio_fix_tbl) {
+                console.log('audio time fixed !');
+                return { 'start': audio_fix_tbl[i][0], 'end': audio_fix_tbl[i][1] };
+            }
+            return { 'start': start, 'end': end };
+        }
+        function play_segment(audio_obj, start, stop) {
+            let audio_obj_new = audio_obj.cloneNode(true); //this is to prevent "play() request was interrupted" error. 
+            audio_obj_new.currentTime = start;
+            audio_obj_new.play();
+            audio_obj_new.int = setInterval(function () {
+                if (audio_obj_new.currentTime > stop) {
+                    audio_obj_new.pause();
+                    clearInterval(audio_obj_new.int);
+                }
+            }, 10);
+        }
+        function play_audio(num, start, end) {
+            let fixed_time = fix_audio_time(num, start, end);
+            let book = Math.floor(num / 10000) + 1;
+            let unit = Math.floor((num % 10000) / 100 + 1);
+            let lesson = Math.floor(num % 100) + 1;
+            if (!(num in audio_objs)) {
+                audio_objs[num] = new Audio('assets/book' + book + '/book' + book + '-unit' + unit + '/lesson' + lesson + '/lesson_words.pepm');
+            }
+            play_segment(audio_objs[num], fixed_time.start, fixed_time.end);
+        }
+        var words_dict = JSON.parse($.getJSON({ 'url': words_json_path, 'async': false }).responseText);
+        $(document).ready(function () {
+            $('#my_tbl').DataTable({
+                dom: 'ifrtilp',
+                lengthMenu: [10, 50, 100, 200],
+                stateSave: true,
+                stateDuration: 60 * 60 * 24 * 30,
+                stripeClasses: [],
+                data: words_dict,
+                columns: [
+                    {
+                        title: "课号",
+                        render: function (data, type, row, meta) {
+                            let line = '';
+                            line += "<span class='hidden'>" + ("0000" + data).slice(-5) + "</span>";
+                            line += 'L' + Math.floor(data / 10000 + 1) + '_';
+                            line += Math.floor((data % 10000) / 100 + 1) + '_';
+                            line += Math.floor(data % 100) + 1;
+                            return line;
+                        }
+                    },
+                    { title: "类型" },
+                    { title: "解释" },
+                    { title: "单词" },
+                    {
+                        title: "音频",
+                        render: function (data, type, row, meta) {
+                            let line = '';
+                            let is_disabled = (data[0] == 0 && data[1] == 0) ? ' disabled' : '';
+                            line += '<button' + is_disabled + ' onclick="play_audio(' + row[0] + ',' + data[0] + ',' + data[1] + ')">&#9654;</button>';
+                            return line;
+                        }
+                    },
+                ]
+            });
+            $('#example').dataTable({
+                "pageLength": 50
+            });
+        });
+    </script>
+</body>
+
+</html>

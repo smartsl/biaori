@@ -1,7 +1,3 @@
-#my_tbl>tbody>tr>td:first-child {
-    vertical-align: top;
-}
-
 div.sticky {
     position: sticky;
     top: 0;
