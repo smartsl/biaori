@@ -1,1 +1,2 @@
 var media_dir = 'C:/Users/<your user name>/AppData/Roaming/Anki2/用户1/collection.media/'
+var gram_json_path = 'gram.json'

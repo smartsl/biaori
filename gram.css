@@ -1,0 +1,179 @@
+#my_tbl>tbody>tr>td:first-child {
+    vertical-align: top;
+}
+
+div.sticky {
+    position: sticky;
+    top: 0;
+}
+
+div.group {
+    background-color: lightgray;
+    padding-bottom: 5px;
+}
+
+div.item {
+    background-color: white;
+    margin: 5px 5px 0 5px;
+    padding: 5px;
+}
+
+span.hidden {
+    display: none;
+}
+
+h2 {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+h2>ul {
+    margin-block-start: 0;
+    margin-block-end: 0;
+    padding-inline-start: 30px;
+}
+
+#my_tbl h3, #my_tbl p {
+    margin-block-start: 0.25rem;
+    margin-block-end: 0.25rem;
+}
+
+h3>.common {
+    white-space: pre-wrap;
+}
+
+p.line {
+    padding-top: 0.25rem;
+}
+
+p.table {
+    display: table;
+}
+
+img {
+    max-width: 60%;
+    max-height: 60%;
+    padding-left: 2rem;
+}
+
+.nav:before {
+    content: ' \25B6';
+    padding-right: 0.25rem;
+    font-size: 0.5rem;
+    vertical-align: 0.1rem;
+}
+
+.find:before {
+    content: '（FIND）';
+    padding-right: 0.25rem;
+    font-size: 0.5rem;
+    vertical-align: 0.1rem;
+}
+
+.rev:before {
+    content: '（REV）';
+    padding-right: 0.25rem;
+    font-size: 0.5rem;
+    vertical-align: 0.1rem;
+}
+
+.box {
+    background-color: LightGray;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    padding-left: 0.125rem;
+    padding-right: 0.125rem;
+}
+
+.shadow {
+    color: #FFA200;
+}
+
+.subline {
+    text-decoration: underline;
+}
+
+.textsize1 {
+    font-weight: bold;
+}
+
+.textsize3 {
+    vertical-align: sub;
+    font-size: 20%;
+    font-weight: normal;
+}
+
+.tl {
+    padding-right: 1rem;
+}
+
+.tr {
+    padding-left: 1rem;
+}
+
+.te {
+    padding-left: 3rem;
+}
+
+.space:before {
+    content: "";
+    padding-left: 2rem;
+}
+
+.span1 {
+    padding-left: 1rem;
+}
+
+.span2 {
+    padding-left: 2rem;
+}
+
+.span3 {
+    padding-left: 3rem;
+}
+
+.span4 {
+    padding-left: 4rem;
+}
+
+.span7 {
+    padding-left: 7rem;
+}
+
+.width1 {
+    display: table-cell;
+    text-align: center;
+    width: 1rem;
+}
+
+.width2 {
+    display: table-cell;
+    text-align: center;
+    width: 2rem;
+}
+
+.width3 {
+    display: table-cell;
+    text-align: center;
+    width: 3rem;
+}
+
+.width4 {
+    display: table-cell;
+    text-align: center;
+    width: 4rem;
+}
+
+.width5 {
+    display: table-cell;
+    text-align: center;
+    width: 5rem;
+}
+
+.width6 {
+    display: table-cell;
+    text-align: center;
+    width: 6rem;
+}
