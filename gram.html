@@ -70,6 +70,7 @@
             $('#my_tbl').DataTable({
                 dom: 'ifrtilp',
                 lengthMenu: [1, 4, 8, 16, 32],
+                pageLength: 4,
                 stateSave: true,
                 stateDuration: 60 * 60 * 24 * 30,
                 stripeClasses: [],
@@ -81,7 +82,7 @@
                             let line = '';
                             line += "<div class='sticky group'>";
                             line += "<h2 class='title'><ul><li>编号</li></ui></h2>";
-                            line += "<div class='item'>";
+                            line += "<div class='item book" + (Math.floor(data / 10000) + 1) + "'>";
                             line += "<span class='hidden'>" + ("0000" + data).slice(-5) + "</span>";
                             line += ['初级', '中级', '高级'][Math.floor(data / 10000)];
                             line += '第' + Math.floor((data % 10000) / 100 + 1) + '单元';
@@ -93,9 +94,6 @@
                     },
                     { title: "语法" },
                 ]
-            });
-            $('#example').dataTable({
-                "pageLength": 4
             });
         });
     </script>

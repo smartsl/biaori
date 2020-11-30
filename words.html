@@ -33,12 +33,34 @@
             height: 80%;
         }
 
-        #my_tbl>tbody>tr:hover {
-            background-color: #f1f3fa;
+        #my_tbl>tbody>tr.book1,
+        #my_tbl>tbody>tr.book1>.sorting_1 {
+            background-color: #f1faf1;
         }
 
-        #my_tbl>tbody>tr:hover>.sorting_1 {
-            background-color: #f1f3fa;
+        #my_tbl>tbody>tr.book2,
+        #my_tbl>tbody>tr.book2>.sorting_1 {
+            background-color: #f1f1fa;
+        }
+
+        #my_tbl>tbody>tr.book3,
+        #my_tbl>tbody>tr.book3>.sorting_1 {
+            background-color: #faf1f1;
+        }
+
+        #my_tbl>tbody>tr.book1:hover,
+        #my_tbl>tbody>tr.book1:hover>.sorting_1 {
+            background: linear-gradient(to bottom, #f1faf1 25%, #fff 25%, #fff 75%, #f1faf1 75%, #f1faf1 100%);
+        }
+
+        #my_tbl>tbody>tr.book2:hover,
+        #my_tbl>tbody>tr.book2:hover>.sorting_1 {
+            background: linear-gradient(to bottom, #f1f1fa 25%, #fff 25%, #fff 75%, #f1f1fa 75%, #f1f1fa 100%);
+        }
+
+        #my_tbl>tbody>tr.book3:hover,
+        #my_tbl>tbody>tr.book3:hover>.sorting_1 {
+            background: linear-gradient(to bottom, #faf1f1 25%, #fff 25%, #fff 75%, #faf1f1 75%, #faf1f1 100%);
         }
 
         #my_tbl>tbody>tr>td {
@@ -46,7 +68,13 @@
         }
 
         #my_tbl>tbody>tr>td:nth-child(1) {
-            width: 15%;
+            width: 10%;
+        }
+
+        #my_tbl>tbody>tr>td:nth-child(2) {
+            width: 10%;
+            text-align: right;
+            padding-right: 2rem;
         }
 
         #my_tbl>tbody>tr>td:nth-child(5) {
@@ -115,7 +143,6 @@
         }
 
         #my_tbl button:enabled:hover {
-            color: #f63;
             background-color: #e6e6e6;
             background-position: 0 -15px;
             transition: background-position 0.1s linear;
@@ -123,6 +150,10 @@
 
         #my_tbl button:focus {
             outline-width: 0;
+        }
+
+        #my_tbl>tbody>tr:hover button:enabled {
+            color: #f63;
         }
     </style>
 </head>
@@ -168,6 +199,7 @@
             $('#my_tbl').DataTable({
                 dom: 'ifrtilp',
                 lengthMenu: [10, 50, 100, 200],
+                pageLength: 50,
                 stateSave: true,
                 stateDuration: 60 * 60 * 24 * 30,
                 stripeClasses: [],
@@ -177,9 +209,9 @@
                         title: "课号",
                         render: function (data, type, row, meta) {
                             let line = '';
-                            line += "<span class='hidden'>" + ("0000" + data).slice(-5) + "</span>";
+                            line += "<span class='hidden'>" + ("0000" + data).slice(-5) + ("0000" + meta.row).slice(-5) + "</span>";
                             line += 'L' + Math.floor(data / 10000 + 1) + '_';
-                            line += Math.floor((data % 10000) / 100 + 1) + '_';
+                            //line += Math.floor((data % 10000) / 100 + 1) + '_';
                             line += Math.floor(data % 100) + 1;
                             return line;
                         }
@@ -196,10 +228,16 @@
                             return line;
                         }
                     },
-                ]
-            });
-            $('#example').dataTable({
-                "pageLength": 50
+                ],
+                createdRow: function (row, data, dataIndex) {
+                    if (data[0] < 10000) {
+                        $(row).addClass('book1');
+                    } else if (data[0] < 20000) {
+                        $(row).addClass('book2');
+                    } else if (data[0] < 30000) {
+                        $(row).addClass('book3');
+                    }
+                }
             });
         });
     </script>
