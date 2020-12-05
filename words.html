@@ -77,6 +77,10 @@
             padding-right: 2rem;
         }
 
+        #my_tbl>tbody>tr>td:nth-child(3) {
+            width: 25%;
+        }
+
         #my_tbl>tbody>tr>td:nth-child(5) {
             width: 15%;
         }
@@ -164,15 +168,6 @@
     </table>
     <script>
         var audio_objs = {};
-        var audio_fix_tbl = { '624,36.705,37.777': [36.705, 38.7], '624,37.777,40.531': [38.7, 40.531], };
-        function fix_audio_time(num, start, end) {
-            let i = num + ',' + start + ',' + end;
-            if (i in audio_fix_tbl) {
-                console.log('audio time fixed !');
-                return { 'start': audio_fix_tbl[i][0], 'end': audio_fix_tbl[i][1] };
-            }
-            return { 'start': start, 'end': end };
-        }
         function play_segment(audio_obj, start, stop) {
             let audio_obj_new = audio_obj.cloneNode(true); //this is to prevent "play() request was interrupted" error. 
             audio_obj_new.currentTime = start;
@@ -185,14 +180,13 @@
             }, 10);
         }
         function play_audio(num, start, end) {
-            let fixed_time = fix_audio_time(num, start, end);
             let book = Math.floor(num / 10000) + 1;
             let unit = Math.floor((num % 10000) / 100 + 1);
             let lesson = Math.floor(num % 100) + 1;
             if (!(num in audio_objs)) {
-                audio_objs[num] = new Audio('assets/book' + book + '/book' + book + '-unit' + unit + '/lesson' + lesson + '/lesson_words.pepm');
+                audio_objs[num] = new Audio('assets/book' + book + '/book' + book + '-unit' + unit + '/lesson' + lesson + '/lesson_words' + audio_ext);
             }
-            play_segment(audio_objs[num], fixed_time.start, fixed_time.end);
+            play_segment(audio_objs[num], start, end);
         }
         var words_dict = JSON.parse($.getJSON({ 'url': words_json_path, 'async': false }).responseText);
         $(document).ready(function () {
@@ -212,7 +206,7 @@
                             line += "<span class='hidden'>" + ("0000" + data).slice(-5) + ("0000" + meta.row).slice(-5) + "</span>";
                             line += 'L' + Math.floor(data / 10000 + 1) + '_';
                             //line += Math.floor((data % 10000) / 100 + 1) + '_';
-                            line += Math.floor(data % 100) + 1;
+                            line += ("0" + (Math.floor(data % 100) + 1)).slice(-2);
                             return line;
                         }
                     },
