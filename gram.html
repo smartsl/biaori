@@ -68,6 +68,9 @@
         var gram_dict = JSON.parse($.getJSON({ 'url': gram_json_path, 'async': false }).responseText);
         $(document).ready(function () {
             $('#my_tbl').DataTable({
+                columnDefs: [
+                    { orderable: false, targets: 1 }
+                ],
                 dom: 'ifrtilp',
                 lengthMenu: [1, 4, 8, 16, 32],
                 pageLength: 4,

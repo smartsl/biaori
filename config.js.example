@@ -1,4 +1,5 @@
 var media_dir = 'C:/Users/<your user name>/AppData/Roaming/Anki2/用户1/collection.media/'
 var gram_json_path = 'gram.json'
 var words_json_path = 'words.json'
+var lessons_json_path = 'lessons.json'
 var audio_ext = '.pepm'

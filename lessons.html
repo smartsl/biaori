@@ -1,0 +1,191 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <title>新标准日本语课文一览表</title>
+    <link rel="stylesheet" type="text/css" href="dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="gram.css">
+    <link rel="stylesheet" type="text/css" href="lessons.css">
+    <script src="jquery-3.5.1.min.js"></script>
+    <script src="datatables.min.js"></script>
+    <script src="config.js"></script>
+    <style>
+        #my_tbl_wrapper {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #my_tbl_info,
+        .dataTables_info {
+            flex-grow: 1;
+            width: 20%;
+            padding: 0;
+        }
+
+        #my_tbl_filter {
+            flex-grow: 1;
+            width: 80%;
+            height: 50px;
+        }
+
+        #my_tbl_filter input {
+            width: calc(100% - 80px);
+            height: 80%;
+        }
+
+        #my_tbl>tbody>tr>td:first-child {
+            vertical-align: top;
+        }
+
+        #my_tbl>tbody>tr>td:nth-child(1) {
+            width: 15%;
+        }
+
+        #my_tbl_length {
+            flex-grow: 1;
+            padding-top: 0.25em;
+        }
+
+        @media screen and (max-width: 767px) {
+            #my_tbl_length {
+                margin-top: 0.5em;
+                padding-left: 5em;
+            }
+        }
+
+        #my_tbl_length>label>select {
+            width: auto;
+            height: 38px;
+        }
+    </style>
+</head>
+
+<body>
+    <p>新标准日本语课文一览表</p>
+    <table id="my_tbl" class="display" style="width:100%">
+    </table>
+    <div id="audio_control" class="group">
+        <div class="item">
+            <input type="checkbox" id="audio_auto_next" name="audio_auto_next" onclick="on_audio_control_click(this);">
+            <label for="audio_auto_next"> 读完全文 </label>
+        </div>
+    </div>
+    <script>
+        var audio_obj = new Audio();
+        var audio_obj_playing = {};
+        var audio_auto_next = false;
+        function play_segment(el, audio_obj, start, stop) {
+            let audio_obj_new = audio_obj.cloneNode(true); //this is to prevent "play() request was interrupted" error. 
+            audio_obj_playing[el] = audio_obj_new;
+            audio_obj_new.currentTime = start;
+            audio_obj_new.onpause = function () {
+                el.style.color = '';
+                delete audio_obj_playing[el];
+                let el_class = el.getAttribute('class');
+                if (audio_auto_next) {
+                    let next_el = el.nextElementSibling;
+                    while (next_el) {
+                        if (next_el.getAttribute('class') == el_class) {
+                            next_el.scrollIntoViewIfNeeded();
+                            next_el.click();
+                            break;
+                        }
+                        next_el = next_el.nextElementSibling;
+                    }
+                }
+            };
+            el.style.color = '#FFA200';
+            audio_obj_new.play();
+            audio_obj_new.int = setInterval(function () {
+                if (audio_obj_new.currentTime > stop) {
+                    audio_obj_new.pause();
+                    clearInterval(audio_obj_new.int);
+                }
+            }, 10);
+        }
+        function sleep(time) {
+            return new Promise((resolve) => setTimeout(resolve, time));
+        }
+        async function do_play_audio(el, audio_obj, start, end) {
+            audio_auto_next = false;
+            for (let _el in audio_obj_playing) {
+                audio_obj_playing[_el].pause();
+            }
+            while (Object.keys(audio_obj_playing).length !== 0) {
+                await sleep(50);
+            }
+            audio_auto_next = $('#audio_auto_next').is(":checked");
+            play_segment(el, audio_obj, start, end);
+        }
+        function play_audio(el, num, type, start, end) {
+            let fname = ['lesson_basic', 'lesson_apps'];
+            let book = Math.floor(num / 10000) + 1;
+            let unit = Math.floor((num % 10000) / 100 + 1);
+            let lesson = Math.floor(num % 100) + 1;
+            audio_obj.src = 'assets/book' + book + '/book' + book + '-unit' + unit + '/lesson' + lesson + '/' + fname[type] + '.pepm';
+            do_play_audio(el, audio_obj, start, end);
+        }
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        function on_audio_control_click(el) {
+            audio_auto_next = el.checked;
+            setCookie('audio_auto_next', audio_auto_next, 30);
+        }
+        var lessons_dict = JSON.parse($.getJSON({ 'url': lessons_json_path, 'async': false }).responseText);
+        $(document).ready(function () {
+            $('#my_tbl').DataTable({
+                columnDefs: [
+                    { orderable: false, targets: 1 }
+                ],
+                dom: 'ifrtilp',
+                lengthMenu: [1, 4, 8, 16, 32],
+                pageLength: 4,
+                stateSave: true,
+                stateDuration: 60 * 60 * 24 * 30,
+                stripeClasses: [],
+                data: lessons_dict,
+                columns: [
+                    {
+                        title: "课号",
+                        render: function (data, type, row, meta) {
+                            let line = '';
+                            line += "<div class='sticky group'>";
+                            line += "<h2 class='title'><ul><li>编号</li></ui></h2>";
+                            line += "<div class='item book" + (Math.floor(data / 10000) + 1) + "'>";
+                            line += "<span class='hidden'>" + ("0000" + data).slice(-5) + "</span>";
+                            line += ['初级', '中级', '高级'][Math.floor(data / 10000)];
+                            line += '第' + Math.floor((data % 10000) / 100 + 1) + '单元';
+                            line += '第' + (4 * Math.floor((data % 10000) / 100) + data % 100 + 1) + '课';
+                            line += '</div>';
+                            line += '</div>';
+                            return line;
+                        }
+                    },
+                    { title: "课文" },
+                ]
+            });
+            audio_auto_next = getCookie('audio_auto_next');
+            $('#audio_auto_next').prop('checked', audio_auto_next);
+        });
+    </script>
+</body>
+
+</html>

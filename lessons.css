@@ -1,0 +1,53 @@
+div.item {
+    margin: 0 5px 0 5px;
+}
+
+div.audio1, div.audio2, div.audio3 {
+    cursor: pointer;
+}
+
+div.audio1:hover>p {
+    background-color: #f1faf1;
+}
+
+div.audio2:hover>p {
+    background-color: #f1f1fa;
+}
+
+div.audio3:hover>p {
+    background-color: #faf1f1;
+}
+
+div#audio_control {
+    position: fixed;
+    padding-top: 5px;
+    left: 16px;
+    top: calc(50%);
+}
+
+p.line {
+    padding-top: 0;
+}
+
+img {
+    max-width: 30%;
+    max-height: 30%;
+    padding-left: 2rem;
+}
+
+.header {
+    font-size: larger;
+}
+
+.tl_v2 {
+    display: table-cell;
+    padding-right: 1rem;
+}
+
+.tr_v2 {
+    display: table-cell;
+    text-align: right;
+    padding-left: 1rem;
+    padding-right: 0.2rem;
+    border-right: 1px dashed #ccc;
+}
