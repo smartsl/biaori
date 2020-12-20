@@ -67,17 +67,23 @@
     </table>
     <div id="audio_control" class="group">
         <div class="item">
-            <input type="checkbox" id="audio_auto_next" name="audio_auto_next" onclick="on_audio_control_click(this);">
+            <input type="checkbox" id="audio_slow_rate" name="audio_slow_rate"
+                onclick="on_audio_slow_rate_click(this);">
+            <label for="audio_slow_rate"> 慢速播放 </label><br /><br />
+            <input type="checkbox" id="audio_auto_next" name="audio_auto_next"
+                onclick="on_audio_auto_next_click(this);">
             <label for="audio_auto_next"> 读完全文 </label>
         </div>
     </div>
     <script>
         var audio_obj = new Audio();
         var audio_obj_playing = {};
+        var audio_slow_rate = false;
         var audio_auto_next = false;
         function play_segment(el, audio_obj, start, stop) {
             let audio_obj_new = audio_obj.cloneNode(true); //this is to prevent "play() request was interrupted" error. 
             audio_obj_playing[el] = audio_obj_new;
+            audio_obj_new.playbackRate = audio_slow_rate ? 0.75 : 1;
             audio_obj_new.currentTime = start;
             audio_obj_new.onpause = function () {
                 el.style.color = '';
@@ -145,7 +151,11 @@
             }
             return null;
         }
-        function on_audio_control_click(el) {
+        function on_audio_slow_rate_click(el) {
+            audio_slow_rate = el.checked;
+            setCookie('audio_slow_rate', audio_slow_rate, 30);
+        }
+        function on_audio_auto_next_click(el) {
             audio_auto_next = el.checked;
             setCookie('audio_auto_next', audio_auto_next, 30);
         }
@@ -182,8 +192,12 @@
                     { title: "课文" },
                 ]
             });
+            audio_slow_rate = getCookie('audio_slow_rate');
+            $('#audio_slow_rate').prop('checked', audio_slow_rate);
+            setCookie('audio_slow_rate', audio_slow_rate, 30);
             audio_auto_next = getCookie('audio_auto_next');
             $('#audio_auto_next').prop('checked', audio_auto_next);
+            setCookie('audio_auto_next', audio_auto_next, 30);
         });
     </script>
 </body>
