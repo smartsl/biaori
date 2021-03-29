@@ -125,10 +125,10 @@
             play_segment(el, audio_obj, start, end);
         }
         function play_audio(el, num, type, start, end) {
-            let fname = ['lesson_basic', 'lesson_apps'];
             let book = Math.floor(num / 10000) + 1;
             let unit = Math.floor((num % 10000) / 100 + 1);
             let lesson = Math.floor(num % 100) + 1;
+            let fname = book == 1 ? ['lesson_basic', 'lesson_apps'] : ['lesson_dialog', 'lesson_article'];
             audio_obj.src = 'assets/book' + book + '/book' + book + '-unit' + unit + '/lesson' + lesson + '/' + fname[type] + '.pepm';
             do_play_audio(el, audio_obj, start, end);
         }

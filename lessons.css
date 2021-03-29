@@ -23,6 +23,12 @@ div#audio_control {
     padding-top: 5px;
     left: 16px;
     top: calc(50%);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 p.line {
@@ -50,4 +56,10 @@ img {
     padding-left: 1rem;
     padding-right: 0.2rem;
     border-right: 1px dashed #ccc;
+}
+
+ruby>rb, ruby>rt {
+    font-size: 8px;
+    font-weight: bold;
+    color: silver;
 }
