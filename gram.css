@@ -74,14 +74,28 @@ img {
 }
 
 .find:before {
-    content: '（FIND）';
+    content: '📑';
     padding-right: 0.25rem;
     font-size: 0.5rem;
     vertical-align: 0.1rem;
 }
 
 .rev:before {
-    content: '（REV）';
+    content: '👨‍🏫[復習]';
+    padding-right: 0.25rem;
+    font-size: 0.5rem;
+    vertical-align: 0.1rem;
+}
+
+.receiver:before {
+    content: '👦🏼';
+    padding-right: 0.25rem;
+    font-size: 0.5rem;
+    vertical-align: 0.1rem;
+}
+
+.caller:before {
+    content: '👨🏻';
     padding-right: 0.25rem;
     font-size: 0.5rem;
     vertical-align: 0.1rem;
