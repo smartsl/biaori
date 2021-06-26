@@ -1,8 +1,8 @@
-<html>
+<html lang="zh-CN">
 
 <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>新标准日本语单词一览表</title>
     <link rel="stylesheet" type="text/css" href="dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="gram.css">
@@ -10,6 +10,35 @@
     <script src="datatables.min.js"></script>
     <script src="config.js"></script>
     <style>
+        .my-box {
+            display: flex;
+            align-items: center;
+            justify-content: left;
+        }
+
+        #word_filter {
+            width: calc(50% - 2px - (4rem + 4px) * 2);
+            min-width: 350px;
+            height: 2.5rem;
+            padding: 5px;
+            border: 1px solid #aaa;
+            border-radius: 3px;
+        }
+
+        .my-btn {
+            width: 4rem;
+            height: 1.5rem;
+            margin-left: 1rem;
+        }
+
+        .my-w4 {
+            width: 5rem;
+        }
+
+        #my_tbl {
+            width: 100% !important;
+        }
+
         #my_tbl_wrapper {
             display: flex;
             flex-wrap: wrap;
@@ -164,7 +193,19 @@
 
 <body>
     <p>新标准日本语单词一览表</p>
-    <table id="my_tbl" class="display" style="width:100%">
+    <p class="my-box">
+        <input type="text" id="word_filter" name="word_filter" placeholder="regular expression search"
+            autocomplete="on">
+        <button class="my-btn" onclick="my_clone();">CLONE</button>
+        <button class="my-btn" onclick="my_clear();">CLEAR</button>
+        <button class="my-btn" onclick="my_begin();">^</button>
+        <button class="my-btn" onclick="my_end();">$</button>
+        <button class="my-btn" onclick="my_search('动');">动词</button>
+        <button class="my-btn" onclick="my_search('形1');">形容词</button>
+        <button class="my-btn my-w4" onclick="my_search('形2');">形容动词</button>
+        <button class="my-btn" onclick="my_search('副');">副词</button>
+    </p>
+    <table id="my_tbl" class="display">
     </table>
     <script>
         var audio_objs = {};
@@ -185,11 +226,14 @@
             let lesson = Math.floor(num % 100) + 1;
             if (!(num in audio_objs)) {
                 audio_objs[num] = new Audio('assets/book' + book + '/book' + book + '-unit' + unit + '/lesson' + lesson + '/lesson_words' + audio_ext);
+                audio_objs[num].addEventListener("canplaythrough", event => {
+                    play_segment(audio_objs[num], start, end);
+                });
+            } else {
+                play_segment(audio_objs[num], start, end);
             }
-            play_segment(audio_objs[num], start, end);
         }
-        var words_dict = JSON.parse($.getJSON({ 'url': words_json_path, 'async': false }).responseText);
-        $(document).ready(function () {
+        function init_tbl(words_dict) {
             $('#my_tbl').DataTable({
                 dom: 'ifrtilp',
                 lengthMenu: [10, 50, 100, 200],
@@ -210,7 +254,12 @@
                             return line;
                         }
                     },
-                    { title: "类型" },
+                    {
+                        title: "类型",
+                        render: function (data, type, row, meta) {
+                            return data.replace(/１/g, '1').replace(/２/g, '2').replace(/３/g, '3');
+                        }
+                    },
                     { title: "解释" },
                     { title: "单词" },
                     {
@@ -233,6 +282,72 @@
                     }
                 }
             });
+            $('#word_filter').val(localStorage['my_tbl_word_filter']);
+            $('#word_filter').on('keyup click input', function () {
+                let v = $('#word_filter').val();
+                let v_valid = true;
+                try {
+                    new RegExp(v);
+                } catch (e) {
+                    v_valid = false;
+                }
+                if (v_valid) {
+                    try {
+                        $('#my_tbl').DataTable().search($('#my_tbl_filter input[type="search"]').val(), Boolean(v), Boolean(!v)).draw();
+                        $('#my_tbl').DataTable().column(3).search(v, Boolean(v), Boolean(!v)).draw();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }
+                let vv = my_remove_re(v);
+                if (vv) {
+                    $('#my_tbl_filter input[type="search"]').val(vv).trigger('keyup');
+                }
+                localStorage['my_tbl_word_filter'] = v;
+            });
+        };
+        function my_remove_re(x) {
+            return x.replace(/\[.*?\]/g, '').replace(/[\^$\.*\+\[\]\\\(\)\|\?:]+/g, '');
+        }
+        function my_clone() {
+            $('#word_filter').val($('#my_tbl_filter input[type="search"]').val()).trigger('keyup');
+        };
+        function my_clear() {
+            let vv0 = $('#my_tbl_filter input[type="search"]').val();
+            let vv = my_remove_re($('#word_filter').val());
+            $('#word_filter').val('').trigger('keyup');
+            $('#my_tbl_filter input[type="search"]').val(vv ? vv : vv0).trigger('keyup');
+        };
+        function my_copy() {
+            if (!$('#word_filter').val()) {
+                my_clone();
+            }
+        }
+        function my_begin() {
+            my_copy();
+            let tmp = $('#word_filter').val();
+            if (tmp.startsWith('^')) {
+                $('#word_filter').val(tmp.substring(1)).trigger('keyup');
+            } else {
+                $('#word_filter').val('^' + tmp).trigger('keyup');
+            }
+        };
+        function my_end() {
+            my_copy();
+            let re = '([\\s（\\(]+|$)';
+            let tmp = $('#word_filter').val();
+            if (tmp.endsWith(re)) {
+                $('#word_filter').val(tmp.substring(0, tmp.length - re.length)).trigger('keyup');
+            } else {
+                $('#word_filter').val(tmp + re).trigger('keyup');
+            }
+        };
+        function my_search(w) {
+            my_copy();
+            $('#my_tbl_filter input[type="search"]').val(w).trigger('keyup');
+        };
+        $(function () {
+            $.getJSON(words_json_path, init_tbl);
         });
     </script>
 </body>
