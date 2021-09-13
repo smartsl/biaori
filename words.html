@@ -4,12 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>新标准日本语单词一览表</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="gram.css">
     <script src="jquery-3.5.1.min.js"></script>
     <script src="datatables.min.js"></script>
     <script src="config.js"></script>
     <style>
+        :lang(ja) {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+        }
+
         .my-box {
             display: flex;
             align-items: center;
@@ -261,7 +268,12 @@
                         }
                     },
                     { title: "解释" },
-                    { title: "单词" },
+                    {
+                        title: "单词",
+                        render: function (data, type, row, meta) {
+                            return "<span lang='ja'>" + data + "</span>";
+                        }
+                    },
                     {
                         title: "音频",
                         render: function (data, type, row, meta) {
